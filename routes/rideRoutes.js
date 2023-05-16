@@ -7,8 +7,6 @@ const Ride = require("../models/ride");
 router.get("/", async (req, res, next) => {
   let rides;
   try {
-    // only find rides that have not been filled
-
     rides = await Ride.find();
   } catch (err) {
     const error = new HttpError(
@@ -22,20 +20,22 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  const { driver, time, address, location, riders } = req.body;
+  const { driver, time, address, location, maxNumber } = req.body;
 
   const createdRide = new Ride({
     driver,
     time,
     address,
     location,
-    riders,
+    maxNumber,
+    riders: [],
   });
 
   try {
     await createdRide.save();
   } catch (err) {
     const error = new HttpError("Creating ride failed, please try again.", 500);
+    console.log(err);
     return next(error);
   }
 
